@@ -1,0 +1,147 @@
+from pathlib import Path
+import zipfile, textwrap
+
+root = Path("/mnt/data/website_ppkn")
+root.mkdir(exist_ok=True)
+
+html = r'''<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PPKn — Ruang Belajar Kewarganegaraan</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--ink:#172033;--muted:#667085;--primary:#123b75;--accent:#d7a928;--line:#e5e7eb;--soft:#edf4ff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{max-width:1200px;margin:auto;display:flex;align-items:center;gap:20px;padding:14px 22px}.brand{font-weight:900;color:var(--primary);font-size:1.15rem}.brand span{color:var(--accent)}
+nav{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}nav a{color:var(--ink);text-decoration:none;padding:7px 10px;border-radius:9px;font-size:.9rem}nav a:hover{background:var(--soft);color:var(--primary)}
+.hero{background:linear-gradient(135deg,#0d2f5f,#18569b);color:#fff}.hero-inner{max-width:1200px;margin:auto;padding:68px 22px 60px;display:grid;grid-template-columns:1.15fr .85fr;gap:35px;align-items:center}.eyebrow{text-transform:uppercase;letter-spacing:2px;font-weight:800;color:#f3d66b;font-size:.8rem}.hero h1{font-size:clamp(2.2rem,5vw,4.4rem);line-height:1.05;margin:10px 0 18px}.hero p{font-size:1.08rem;max-width:680px;color:#e4edfa}.btn{display:inline-block;background:#fff;color:var(--primary);font-weight:800;padding:12px 18px;border-radius:12px;text-decoration:none;margin-top:10px}.hero-art{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:28px;padding:18px}
+.container{max-width:1200px;margin:auto;padding:52px 22px}.section-title{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:25px}.section-title h2{font-size:2rem;margin:0}.section-title p{color:var(--muted);margin:0;max-width:650px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 8px 24px rgba(16,24,40,.05)}.card h3{margin-top:8px;color:var(--primary)}.card p{color:#536071}.icon{width:48px;height:48px;border-radius:14px;background:var(--soft);display:grid;place-items:center;font-size:1.45rem}
+.lesson{display:grid;grid-template-columns:280px 1fr;gap:25px;margin:25px 0}.side{position:sticky;top:90px;height:max-content}.side img{width:100%;border-radius:18px;background:#eaf2ff}.content{background:#fff;border:1px solid var(--line);border-radius:20px;padding:30px}.content h3{font-size:1.65rem;color:var(--primary);margin-top:0}.content h4{color:#244e83;margin-bottom:6px}.content ul{padding-left:22px}.note{background:#fff8df;border-left:5px solid var(--accent);padding:14px 17px;border-radius:10px;margin:18px 0}.definition{background:var(--soft);padding:17px;border-radius:12px;margin:18px 0}.timeline{border-left:3px solid var(--accent);padding-left:22px}.time{margin:0 0 20px}.time strong{color:var(--primary)}
+.search{width:100%;padding:13px 15px;border:1px solid var(--line);border-radius:12px;font-size:1rem;margin:0 0 24px}.quote{font-size:1.2rem;font-weight:700;color:var(--primary);padding:24px;border-radius:16px;background:#eef5ff;text-align:center}
+footer{background:#10243f;color:#dce6f4;text-align:center;padding:35px 20px;margin-top:30px}footer strong{color:#fff}
+@media(max-width:850px){.hero-inner,.lesson{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}.side{position:static}.hero-art{max-width:520px;margin:auto}}
+@media(max-width:560px){nav{display:none}.cards{grid-template-columns:1fr}.container{padding:38px 16px}.hero-inner{padding:48px 16px}.content{padding:21px}}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<header><div class="nav">
+<div class="brand">PPKn<span> • </span>Ruang Belajar</div>
+<nav>
+<a href="#beranda">Beranda</a><a href="#materi">Materi</a><a href="#pancasila">Pancasila</a><a href="#konstitusi">UUD 1945</a><a href="#demokrasi">Demokrasi</a><a href="#ham">HAM</a><a href="#nkri">NKRI</a>
+</nav></div></header>
+
+<section class="hero" id="beranda"><div class="hero-inner">
+<div><div class="eyebrow">Pembelajaran PPKn SMA/MA</div>
+<h1>Belajar menjadi warga negara yang sadar hak dan kewajiban.</h1>
+<p>Website pembelajaran PPKn dengan materi terstruktur, penjelasan sederhana, ilustrasi, contoh penerapan, dan rangkuman. Tidak ada soal latihan.</p>
+<a class="btn" href="#materi">Mulai Belajar ↓</a></div>
+<div class="hero-art">
+<svg viewBox="0 0 520 350" width="100%" role="img" aria-label="Ilustrasi pendidikan kewarganegaraan">
+<rect width="520" height="350" rx="22" fill="#eaf2ff"/><circle cx="260" cy="175" r="105" fill="#fff"/>
+<path d="M155 175h210M260 70v210" stroke="#d7a928" stroke-width="8"/>
+<path d="M190 110l70-35 70 35-70 35z" fill="#123b75"/><path d="M210 132v45c0 25 100 25 100 0v-45" fill="#18569b"/>
+<circle cx="260" cy="235" r="24" fill="#d7a928"/><path d="M248 235l8 8 18-20" fill="none" stroke="#fff" stroke-width="6"/>
+<text x="260" y="320" text-anchor="middle" fill="#123b75" font-size="22" font-weight="800">PANCASILA • KONSTITUSI • NKRI</text>
+</svg></div>
+</div></section>
+
+<main>
+<section class="container" id="materi">
+<div class="section-title"><div><h2>Peta Materi</h2><p>Gunakan bagian berikut sebagai jalur belajar dari dasar nilai kebangsaan hingga kehidupan demokratis.</p></div></div>
+<input class="search" id="search" placeholder="Cari materi, misalnya: Pancasila, HAM, demokrasi, NKRI...">
+<div class="cards" id="cards">
+<div class="card searchable"><div class="icon">🇮🇩</div><h3>Pancasila</h3><p>Kedudukan Pancasila sebagai dasar negara, ideologi, dan pedoman kehidupan bermasyarakat.</p></div>
+<div class="card searchable"><div class="icon">📜</div><h3>UUD NRI 1945</h3><p>Konstitusi, fungsi, struktur, hak dan kewajiban warga negara.</p></div>
+<div class="card searchable"><div class="icon">🗳️</div><h3>Demokrasi</h3><p>Prinsip demokrasi, musyawarah, partisipasi, dan pemilu.</p></div>
+<div class="card searchable"><div class="icon">⚖️</div><h3>HAM</h3><p>Pengertian, prinsip, contoh, kewajiban menghormati hak orang lain.</p></div>
+<div class="card searchable"><div class="icon">🗺️</div><h3>NKRI & Wawasan Nusantara</h3><p>Persatuan wilayah, kebinekaan, dan ketahanan kehidupan berbangsa.</p></div>
+<div class="card searchable"><div class="icon">🤝</div><h3>Bhinneka Tunggal Ika</h3><p>Makna persatuan dalam keberagaman serta sikap toleransi.</p></div>
+</div></section>
+
+<section class="container" id="pancasila">
+<div class="lesson"><div class="side"><svg viewBox="0 0 280 210"><rect width="280" height="210" rx="18" fill="#eaf2ff"/><circle cx="140" cy="95" r="55" fill="#fff"/><text x="140" y="88" text-anchor="middle" font-size="45">🇮🇩</text><text x="140" y="132" text-anchor="middle" font-size="17" font-weight="800" fill="#123b75">PANCASILA</text><text x="140" y="155" text-anchor="middle" font-size="12" fill="#536071">dasar nilai kehidupan</text></svg></div>
+<div class="content"><h3>Pancasila</h3><p>Pancasila merupakan dasar negara Republik Indonesia dan menjadi landasan nilai dalam penyelenggaraan kehidupan berbangsa dan bernegara.</p>
+<div class="definition"><strong>Lima sila:</strong><br>1. Ketuhanan Yang Maha Esa<br>2. Kemanusiaan yang Adil dan Beradab<br>3. Persatuan Indonesia<br>4. Kerakyatan yang Dipimpin oleh Hikmat Kebijaksanaan dalam Permusyawaratan/Perwakilan<br>5. Keadilan Sosial bagi Seluruh Rakyat Indonesia</div>
+<h4>Fungsi Pancasila</h4><ul><li>Dasar negara dalam penyelenggaraan negara.</li><li>Pandangan hidup yang memberi arah bagi sikap dan tindakan.</li><li>Ideologi nasional yang menjadi orientasi bersama.</li><li>Sumber nilai dalam kehidupan hukum dan sosial.</li></ul>
+<h4>Penerapan sehari-hari</h4><p>Menghormati perbedaan keyakinan, menolong sesama, menjaga persatuan, menyelesaikan masalah melalui musyawarah, serta bersikap adil merupakan contoh penerapan nilai Pancasila.</p>
+<div class="note"><strong>Inti:</strong> Pancasila tidak hanya dihafalkan, tetapi diwujudkan melalui perilaku yang menghormati manusia, persatuan, musyawarah, dan keadilan.</div></div></div>
+</section>
+
+<section class="container" id="konstitusi">
+<div class="lesson"><div class="side"><svg viewBox="0 0 280 210"><rect width="280" height="210" rx="18" fill="#fff8df"/><rect x="72" y="38" width="136" height="135" rx="8" fill="#fff" stroke="#d7a928" stroke-width="6"/><path d="M92 72h96M92 97h96M92 122h70M92 147h80" stroke="#123b75" stroke-width="7"/><text x="140" y="28" text-anchor="middle" font-size="14" font-weight="800" fill="#123b75">KONSTITUSI</text></svg></div>
+<div class="content"><h3>UUD Negara Republik Indonesia Tahun 1945</h3><p>Konstitusi adalah hukum dasar yang menjadi landasan penyelenggaraan negara. UUD NRI Tahun 1945 mengatur prinsip dasar negara, lembaga negara, serta hubungan negara dengan warga negara.</p>
+<h4>Fungsi konstitusi</h4><ul><li>Menjadi hukum dasar tertulis.</li><li>Membatasi dan mengatur kekuasaan negara.</li><li>Menjamin hak-hak konstitusional warga negara.</li><li>Menjadi pedoman penyelenggaraan pemerintahan.</li></ul>
+<h4>Hak dan kewajiban</h4><p>Warga negara memiliki hak yang dijamin konstitusi, sekaligus kewajiban untuk menghormati hukum, hak orang lain, dan kepentingan kehidupan bersama.</p>
+<div class="quote">“Hak dan kewajiban berjalan beriringan dalam kehidupan sebagai warga negara.”</div>
+</div></div></section>
+
+<section class="container" id="demokrasi">
+<div class="lesson"><div class="side"><svg viewBox="0 0 280 210"><rect width="280" height="210" rx="18" fill="#eaf2ff"/><circle cx="140" cy="93" r="55" fill="#fff"/><circle cx="112" cy="93" r="14" fill="#123b75"/><circle cx="168" cy="93" r="14" fill="#18569b"/><path d="M88 145h104" stroke="#d7a928" stroke-width="10" stroke-linecap="round"/><text x="140" y="184" text-anchor="middle" font-size="17" font-weight="800" fill="#123b75">DEMOKRASI</text></svg></div>
+<div class="content"><h3>Demokrasi dan Kehidupan Politik</h3><p>Demokrasi menempatkan rakyat sebagai bagian penting dalam proses penyelenggaraan kehidupan bernegara. Dalam konteks Indonesia, demokrasi dilaksanakan berdasarkan konstitusi dan nilai Pancasila.</p>
+<h4>Prinsip penting</h4><ul><li>Kesetaraan warga negara di hadapan hukum dan pemerintahan.</li><li>Partisipasi masyarakat dalam kehidupan publik.</li><li>Pengambilan keputusan melalui mekanisme yang sah.</li><li>Penghormatan terhadap hak dan kebebasan yang dijamin hukum.</li><li>Akuntabilitas penyelenggara negara.</li></ul>
+<h4>Musyawarah</h4><p>Musyawarah adalah proses membahas persoalan bersama untuk mencari keputusan yang dapat dipertanggungjawabkan. Di sekolah, contohnya adalah membahas program kelas bersama sebelum menentukan keputusan.</p>
+</div></div></section>
+
+<section class="container" id="ham">
+<div class="lesson"><div class="side"><svg viewBox="0 0 280 210"><rect width="280" height="210" rx="18" fill="#edf8f1"/><path d="M140 35v125M92 68h96M72 68l-20 45h40zM208 68l-20 45h40z" fill="none" stroke="#123b75" stroke-width="8" stroke-linejoin="round"/><circle cx="140" cy="35" r="11" fill="#d7a928"/><text x="140" y="190" text-anchor="middle" font-size="17" font-weight="800" fill="#123b75">HAM & KEADILAN</text></svg></div>
+<div class="content"><h3>Hak Asasi Manusia</h3><p>HAM adalah hak yang melekat pada setiap manusia. Dalam kehidupan bernegara, penghormatan terhadap HAM berjalan bersama dengan kewajiban menghormati hak orang lain serta ketentuan hukum.</p>
+<h4>Contoh hak</h4><ul><li>Hak untuk hidup.</li><li>Hak memperoleh pendidikan.</li><li>Hak beragama dan berkeyakinan sesuai ketentuan hukum.</li><li>Hak menyampaikan pendapat secara bertanggung jawab.</li><li>Hak memperoleh perlakuan yang adil di hadapan hukum.</li></ul>
+<h4>Menjalankan HAM secara bertanggung jawab</h4><p>Kebebasan tidak berarti bebas melakukan apa saja. Dalam masyarakat, penggunaan hak perlu menghormati hak orang lain, ketertiban, keamanan, moral, dan batasan yang ditetapkan oleh hukum.</p>
+</div></div></section>
+
+<section class="container" id="nkri">
+<div class="lesson"><div class="side"><svg viewBox="0 0 280 210"><rect width="280" height="210" rx="18" fill="#fff3f3"/><path d="M55 130c35-30 55-42 82-30 20 9 28-14 47-9 20 6 28 24 43 22" fill="none" stroke="#123b75" stroke-width="12" stroke-linecap="round"/><circle cx="75" cy="105" r="9" fill="#d7a928"/><circle cx="190" cy="90" r="9" fill="#d7a928"/><text x="140" y="178" text-anchor="middle" font-size="17" font-weight="800" fill="#123b75">NKRI</text></svg></div>
+<div class="content"><h3>NKRI, Persatuan, dan Wawasan Nusantara</h3><p>Negara Kesatuan Republik Indonesia merupakan bentuk negara Indonesia. Persatuan diperlukan agar keberagaman suku, agama, budaya, bahasa, dan daerah menjadi kekuatan bersama.</p>
+<h4>Wawasan Nusantara</h4><p>Wawasan Nusantara memandang Indonesia sebagai satu kesatuan wilayah dan kehidupan nasional. Cara pandang ini menekankan persatuan dengan tetap menghargai keragaman.</p>
+<h4>Sikap menjaga persatuan</h4><ul><li>Menghargai budaya dan kebiasaan yang berbeda.</li><li>Menghindari diskriminasi dan perundungan.</li><li>Mengutamakan kepentingan bersama.</li><li>Menjaga lingkungan dan fasilitas umum.</li><li>Menyelesaikan konflik dengan dialog dan aturan yang berlaku.</li></ul>
+</div></div></section>
+
+<section class="container">
+<div class="section-title"><div><h2>Bhinneka Tunggal Ika</h2><p>Berbeda-beda tetapi tetap satu. Persatuan tidak mengharuskan semua orang menjadi sama.</p></div></div>
+<div class="cards">
+<div class="card"><div class="icon">🌏</div><h3>Keberagaman</h3><p>Perbedaan merupakan bagian nyata dari masyarakat Indonesia dan dapat menjadi sumber kekayaan sosial-budaya.</p></div>
+<div class="card"><div class="icon">🤝</div><h3>Toleransi</h3><p>Menghormati perbedaan dengan tetap berpegang pada aturan, hak asasi, dan tanggung jawab bersama.</p></div>
+<div class="card"><div class="icon">🧩</div><h3>Gotong Royong</h3><p>Bekerja bersama untuk kepentingan yang bermanfaat bagi lingkungan dan masyarakat.</p></div>
+</div>
+</section>
+
+<section class="container">
+<div class="section-title"><div><h2>Nilai PPKn dalam Kehidupan</h2><p>Materi PPKn menjadi bermakna ketika diterapkan dalam tindakan nyata.</p></div></div>
+<div class="content">
+<div class="timeline">
+<div class="time"><strong>Di rumah:</strong> menghargai anggota keluarga, bermusyawarah, dan melaksanakan tanggung jawab.</div>
+<div class="time"><strong>Di sekolah:</strong> menaati tata tertib, menghormati guru dan teman, serta menjaga fasilitas sekolah.</div>
+<div class="time"><strong>Di masyarakat:</strong> menjaga kerukunan, ikut kegiatan sosial, dan menghargai perbedaan.</div>
+<div class="time"><strong>Di ruang digital:</strong> memeriksa informasi, menjaga etika komunikasi, menghormati privasi, dan tidak menyebarkan kebencian.</div>
+</div></div>
+</section>
+</main>
+<footer><strong>PPKn • Ruang Belajar Kewarganegaraan</strong><br>Website pembelajaran tanpa soal latihan • Dirancang untuk belajar mandiri</footer>
+
+<script>
+const search=document.getElementById('search');
+const cards=[...document.querySelectorAll('.searchable')];
+search.addEventListener('input',()=>{const q=search.value.toLowerCase().trim();cards.forEach(c=>c.classList.toggle('hidden',q && !c.innerText.toLowerCase().includes(q)))});
+</script>
+</body></html>'''
+
+(root/"index.html").write_text(html, encoding="utf-8")
+readme = """WEBSITE PPKn — Ruang Belajar Kewarganegaraan
+Cara menjalankan:
+1. Ekstrak file ZIP.
+2. Buka index.html di Google Chrome/Edge.
+3. Website dapat dijalankan tanpa instalasi dan tanpa server.
+Materi: Pancasila, UUD NRI 1945, demokrasi, HAM, NKRI/Wawasan Nusantara, Bhinneka Tunggal Ika, dan penerapan nilai PPKn.
+Tidak ada soal latihan.
+"""
+(root/"README.txt").write_text(readme, encoding="utf-8")
+zip_path=Path("/mnt/data/website_ppkn_lengkap.zip")
+with zipfile.ZipFile(zip_path,"w",zipfile.ZIP_DEFLATED) as z:
+    z.write(root/"index.html","website_ppkn/index.html")
+    z.write(root/"README.txt","website_ppkn/README.txt")
+
+print(f"Website selesai dibuat.\nZIP: {zip_path}\nHTML: {root/'index.html'}")
